@@ -1,62 +1,57 @@
-;
-; KmdfDriver.inf
-;
+; KMDF Driver INF File for UPTC Device Manager
 
 [Version]
-Signature   = "$WINDOWS NT$"
-Class       = System ; TODO: specify appropriate Class
-ClassGuid   = {4d36e97d-e325-11ce-bfc1-08002be10318} ; TODO: specify appropriate ClassGuid
-Provider    = %ManufacturerName%
-CatalogFile = KmdfDriver.cat
-DriverVer   = ; TODO: set DriverVer in stampinf property pages
-PnpLockdown = 1
-
-[DestinationDirs]
-DefaultDestDir = 13
-
-[SourceDisksNames]
-1 = %DiskName%,,,""
-
-[SourceDisksFiles]
-KmdfDriver.sys  = 1,,
-
-;*****************************************
-; Install Section
-;*****************************************
+Signature="$WINDOWS NT$"
+Class=System
+ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider=%ProviderName%
+DriverVer=11/18/2024,1.0.0.0
+CatalogFile=KmdfDriver.cat
 
 [Manufacturer]
-%ManufacturerName% = Standard,NT$ARCH$.10.0...16299 ; %13% support introduced in build 16299
+%ManufacturerName%=Standard,NTx86,NTamd64
 
-[Standard.NT$ARCH$.10.0...16299]
-%KmdfDriver.DeviceDesc% = KmdfDriver_Device, Root\KmdfDriver ; TODO: edit hw-id
+[Standard.NTx86]
+%KmdfKeyboardDeviceName%=KmdfDevice_Install, Root\UPTCKeyboard
+%KmdfPrinterDeviceName%=KmdfDevice_Install, Root\UPTCPrinter
+%KmdfStorageDeviceName%=KmdfDevice_Install, Root\UPTCStorage
+%KmdfDisplayDeviceName%=KmdfDevice_Install, Root\UPTCDisplay
 
-[KmdfDriver_Device.NT]
-CopyFiles = File_Copy
+[Standard.NTamd64]
+%KmdfKeyboardDeviceName%=KmdfDevice_Install, Root\UPTCKeyboard
+%KmdfPrinterDeviceName%=KmdfDevice_Install, Root\UPTCPrinter
+%KmdfStorageDeviceName%=KmdfDevice_Install, Root\UPTCStorage
+%KmdfDisplayDeviceName%=KmdfDevice_Install, Root\UPTCDisplay
 
-[File_Copy]
+; Installation Section
+[KmdfDevice_Install]
+CopyFiles=KmdfDriver_CopyFiles
+AddReg=KmdfDevice_AddReg
+
+[KmdfDevice_Install.Services]
+AddService=KmdfDriver, 0x00000002, KmdfService_Install
+
+[KmdfService_Install]
+DisplayName=%KmdfServiceDisplayName%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\KmdfDriver.sys
+
+[DestinationDirs]
+DefaultDestDir=12
+
+[KmdfDriver_CopyFiles]
 KmdfDriver.sys
 
-;-------------- Service installation
-[KmdfDriver_Device.NT.Services]
-AddService = KmdfDriver,%SPSVCINST_ASSOCSERVICE%, KmdfDriver_Service_Inst
-
-; -------------- KmdfDriver driver install sections
-[KmdfDriver_Service_Inst]
-DisplayName    = %KmdfDriver.SVCDESC%
-ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
-StartType      = 3               ; SERVICE_DEMAND_START
-ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
-ServiceBinary  = %13%\KmdfDriver.sys
-
-[KmdfDriver_Device.NT.Wdf]
-KmdfService = KmdfDriver, KmdfDriver_wdfsect
-
-[KmdfDriver_wdfsect]
-KmdfLibraryVersion = $KMDFVERSION$
+[KmdfDevice_AddReg]
+; Add any necessary registry entries here
 
 [Strings]
-SPSVCINST_ASSOCSERVICE = 0x00000002
-ManufacturerName = "<Your manufacturer name>" ;TODO: Replace with your manufacturer name
-DiskName = "KmdfDriver Installation Disk"
-KmdfDriver.DeviceDesc = "KmdfDriver Device"
-KmdfDriver.SVCDESC = "KmdfDriver Service"
+ProviderName="UPTC"
+ManufacturerName="UPTC Development Team"
+KmdfKeyboardDeviceName="UPTC Keyboard Device"
+KmdfPrinterDeviceName="UPTC Printer Device"
+KmdfStorageDeviceName="UPTC Storage Device"
+KmdfDisplayDeviceName="UPTC Display Device"
+KmdfServiceDisplayName="UPTC Device Manager Service"
