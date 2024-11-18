@@ -1,0 +1,29 @@
+# Visual Studio files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+
+# Build folders
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+x64/
+ARM64/
+
+# WDK artifacts
+*.cat
+*.sys
+*.tmh
+
+# Other
+.vs/
+*.log
+*.ipch
+*.obj
+*.pch
+*.ilk
+*.idb
+*.pdb
